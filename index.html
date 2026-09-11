@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- ================= Open Graph / WhatsApp Preview Meta Tags ================= -->
+  <!-- Open Graph / WhatsApp Preview Meta Tags -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://shamehub.github.io/BujangMOTOR/">
   <meta property="og:title" content="BujangMOTOR — Showroom Motor Bekas Premium">
@@ -24,7 +24,7 @@
   <!-- Lucide Icons CDN -->
   <script src="https://unpkg.com/lucide@latest"></script>
 
-  <!-- PhotoSwipe v5 CSS & JS (Support Pinch-to-Zoom 2 Jari & Touch Gesture) -->
+  <!-- PhotoSwipe v5 CSS & JS (Pinch-to-Zoom 2 Jari) -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@5.4.3/dist/photoswipe.css">
 
   <script>
@@ -82,7 +82,7 @@
 
   <!-- ==================== VIEW 1: KATALOG UTAMA (HOME VIEW) ==================== -->
   <div id="homeView">
-    <!-- Hero Section dengan Background Gambar Transparan & Blur -->
+    <!-- Hero Section -->
     <section class="relative py-12 lg:py-16 overflow-hidden border-b border-slate-200">
       
       <!-- Layer Gambar Latar Belakang -->
@@ -213,6 +213,12 @@
       return `${cleanName}-${id.toLowerCase()}`;
     }
 
+    function isSoldOut(status) {
+      if (!status) return false;
+      const cleanStatus = status.toString().trim().toLowerCase();
+      return cleanStatus === 'sold out' || cleanStatus === 'terjual' || cleanStatus === 'sold';
+    }
+
     async function fetchData() {
       try {
         const res = await fetch(GAS_API_URL);
@@ -266,31 +272,45 @@
       data.forEach(item => {
         const thumbUrl = formatDriveUrl(item.THUMBNAIL);
         const slug = createSlug(item.UNIT, item.ID);
+        const sold = isSoldOut(item.STATUS);
+
         const card = document.createElement('div');
-        card.className = "bg-white border border-slate-200/80 rounded-2xl overflow-hidden hover:shadow-xl hover:border-amber-500/40 transition duration-300 flex flex-col justify-between group shadow-sm";
+        card.className = `bg-white border border-slate-200/80 rounded-2xl overflow-hidden transition duration-300 flex flex-col justify-between shadow-sm relative ${
+          sold ? 'grayscale opacity-60 bg-slate-100/90' : 'hover:shadow-xl hover:border-amber-500/40 group'
+        }`;
 
         card.innerHTML = `
           <div>
             <div class="relative aspect-video overflow-hidden bg-slate-100">
-              <img src="${thumbUrl}" alt="${item.UNIT}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+              <img src="${thumbUrl}" alt="${item.UNIT}" class="w-full h-full object-cover ${sold ? '' : 'group-hover:scale-105'} transition duration-500">
+              
               <span class="absolute top-3 left-3 bg-white/90 backdrop-blur-md text-amber-700 border border-amber-200 text-xs font-bold px-2.5 py-1 rounded-lg shadow-sm">
                 ${item.KATEGORI || 'General'}
               </span>
-              <span class="absolute top-3 right-3 bg-slate-900/80 backdrop-blur-md text-white text-xs font-semibold px-2.5 py-1 rounded-lg">
-                Plat ${item.PLAT || '-'}
-              </span>
+
+              ${sold ? `
+                <span class="absolute inset-0 bg-slate-900/40 backdrop-blur-[1px] flex items-center justify-center">
+                  <span class="bg-red-600/90 text-white font-black text-lg tracking-widest px-4 py-1.5 rounded-xl shadow-lg border border-red-400 uppercase transform -rotate-6">
+                    SOLD OUT
+                  </span>
+                </span>
+              ` : `
+                <span class="absolute top-3 right-3 bg-slate-900/80 backdrop-blur-md text-white text-xs font-semibold px-2.5 py-1 rounded-lg">
+                  Plat ${item.PLAT || '-'}
+                </span>
+              `}
             </div>
 
             <div class="p-5">
               <div class="flex justify-between items-start mb-2">
-                <h3 class="text-xl font-bold text-slate-900 group-hover:text-amber-600 transition">${item.UNIT}</h3>
+                <h3 class="text-xl font-bold ${sold ? 'text-slate-500 line-through' : 'text-slate-900 group-hover:text-amber-600'} transition">${item.UNIT}</h3>
               </div>
               
-              <div class="grid grid-cols-2 gap-2.5 my-4 text-xs font-medium text-slate-600 bg-slate-50 p-3 rounded-xl border border-slate-100">
+              <div class="grid grid-cols-2 gap-2.5 my-4 text-xs font-medium ${sold ? 'text-slate-400 bg-slate-200/50' : 'text-slate-600 bg-slate-50'} p-3 rounded-xl border border-slate-100">
                 <div class="flex items-center gap-1.5"><i data-lucide="calendar" class="w-4 h-4 text-amber-600"></i> ${item.TAHUN}</div>
                 <div class="flex items-center gap-1.5"><i data-lucide="gauge" class="w-4 h-4 text-amber-600"></i> ${item['JARAK_TEMPUH'] ? item['JARAK_TEMPUH'].toLocaleString() + ' km' : '-'}</div>
                 <div class="flex items-center gap-1.5"><i data-lucide="zap" class="w-4 h-4 text-amber-600"></i> ${item.KAPASITAS}</div>
-                <div class="flex items-center gap-1.5"><i data-lucide="file-check" class="w-4 h-4 text-emerald-600"></i> STNK & BPKB ${item.STNK === 'ADA' ? '✓' : '-'}</div>
+                <div class="flex items-center gap-1.5"><i data-lucide="file-check" class="w-4 h-4 text-emerald-600"></i> Surat ${item.STNK === 'ADA' ? '✓' : '-'}</div>
               </div>
 
               <p class="text-slate-500 text-sm line-clamp-2 mt-2 leading-relaxed">
@@ -300,13 +320,20 @@
           </div>
 
           <div class="p-5 pt-0 mt-auto flex gap-2">
-            <a href="#${slug}" class="flex-1 bg-slate-100 hover:bg-amber-600 hover:text-white text-slate-800 font-semibold py-2.5 rounded-xl transition duration-300 text-sm flex items-center justify-center gap-2 border border-slate-200 hover:border-amber-600">
-              <span>Detail Unit</span>
-              <i data-lucide="arrow-right" class="w-4 h-4"></i>
-            </a>
-            <button onclick="shareLink('#${slug}')" title="Bagikan Unit Ini" class="p-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl border border-slate-200 transition">
-              <i data-lucide="share-2" class="w-4 h-4"></i>
-            </button>
+            ${sold ? `
+              <button disabled class="flex-1 bg-slate-200 text-slate-400 font-semibold py-2.5 rounded-xl text-sm cursor-not-allowed border border-slate-300 flex items-center justify-center gap-2">
+                <span>Unit Terjual</span>
+                <i data-lucide="lock" class="w-4 h-4"></i>
+              </button>
+            ` : `
+              <a href="#${slug}" class="flex-1 bg-slate-100 hover:bg-amber-600 hover:text-white text-slate-800 font-semibold py-2.5 rounded-xl transition duration-300 text-sm flex items-center justify-center gap-2 border border-slate-200 hover:border-amber-600">
+                <span>Detail Unit</span>
+                <i data-lucide="arrow-right" class="w-4 h-4"></i>
+              </a>
+              <button onclick="shareLink('#${slug}')" title="Bagikan Unit Ini" class="p-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl border border-slate-200 transition">
+                <i data-lucide="share-2" class="w-4 h-4"></i>
+              </button>
+            `}
           </div>
         `;
 
@@ -346,6 +373,12 @@
     }
 
     function showDetailView(item) {
+      if (isSoldOut(item.STATUS)) {
+        showHomeView();
+        showToast("Mohon maaf, unit ini telah Sold Out!");
+        return;
+      }
+
       const slug = createSlug(item.UNIT, item.ID);
       const shareableUrl = `${window.location.origin}${window.location.pathname}#${slug}`;
 
@@ -390,7 +423,6 @@ Apakah unit ini masih tersedia?`;
           <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">${item.UNIT}</h1>
         </div>
 
-        <!-- Galeri PhotoSwipe Support Pinch-to-Zoom 2 Jari -->
         <div class="mb-10">
           <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center justify-between">
             <span class="flex items-center gap-2">
@@ -400,7 +432,6 @@ Apakah unit ini masih tersedia?`;
           </h3>
 
           <div id="photoGallery">
-            <!-- Thumbnail Paling Atas dan Paling Besar -->
             <a href="${photos[0].url}" data-pswp-width="1200" data-pswp-height="800" target="_blank" class="block group relative aspect-video rounded-2xl overflow-hidden bg-slate-100 border border-slate-200 shadow-md mb-4 cursor-zoom-in">
               <img src="${photos[0].url}" alt="${photos[0].label}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
               <span class="absolute top-4 left-4 bg-amber-600/90 backdrop-blur-md text-xs font-bold text-white px-3 py-1 rounded-lg shadow-sm">
@@ -413,7 +444,6 @@ Apakah unit ini masih tersedia?`;
               </div>
             </a>
 
-            <!-- Grid 4 Foto Lainnya -->
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
               ${photos.slice(1).map(p => `
                 <a href="${p.url}" data-pswp-width="1200" data-pswp-height="800" target="_blank" class="block group relative aspect-[4/3] rounded-xl overflow-hidden bg-slate-100 border border-slate-200 shadow-sm cursor-zoom-in">
@@ -456,6 +486,10 @@ Apakah unit ini masih tersedia?`;
               <span class="text-xs text-slate-500 block mb-1">Status BPKB</span>
               <span class="text-emerald-700 font-bold text-sm flex items-center gap-1"><i data-lucide="check-circle" class="w-4 h-4"></i> ${item.BPKB}</span>
             </div>
+            <div class="p-2 border-t border-slate-200/80 pt-3 col-span-2">
+              <span class="text-xs text-slate-500 block mb-1">Status Pajak</span>
+              <span class="text-slate-900 font-bold text-sm flex items-center gap-1"><i data-lucide="file-text" class="w-4 h-4 text-amber-600"></i> ${item.PAJAK || '-'}</span>
+            </div>
           </div>
         </div>
 
@@ -480,7 +514,6 @@ Apakah unit ini masih tersedia?`;
       window.scrollTo(0, 0);
       lucide.createIcons();
 
-      // Inisialisasi PhotoSwipe Lightbox
       if (window.initPhotoSwipe) {
         window.initPhotoSwipe();
       }
