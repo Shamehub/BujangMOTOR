@@ -23,6 +23,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <!-- Lucide Icons CDN -->
   <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- PhotoSwipe v5 CSS & JS (Support Pinch-to-Zoom 2 Jari & Touch Gesture) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@5.4.3/dist/photoswipe.css">
+
   <script>
     tailwind.config = {
       theme: {
@@ -33,9 +37,9 @@
           colors: {
             amber: {
               50: '#fffbeb',
-              100: '#f3f77e',
-              500: '#eaed1f',
-              600: '#d6d611',
+              100: '#fef3c7',
+              500: '#f59e0b',
+              600: '#d97706',
               700: '#b45309',
             }
           }
@@ -81,14 +85,13 @@
     <!-- Hero Section dengan Background Gambar Transparan & Blur -->
     <section class="relative py-12 lg:py-16 overflow-hidden border-b border-slate-200">
       
-      <!-- Layer Gambar Latar Belakang (Transparansi 75% / Opacity 25% + Blur) -->
+      <!-- Layer Gambar Latar Belakang -->
       <div class="absolute inset-0 z-0">
         <img 
           src="https://shamehub.github.io/BujangMOTOR/preview.jpg" 
           alt="Showroom Background" 
           class="w-full h-full object-cover opacity-25 blur-[3px] scale-105"
         >
-        <!-- Overlay Gradient -->
         <div class="absolute inset-0 bg-gradient-to-b from-amber-500/10 via-slate-50/70 to-slate-50"></div>
       </div>
 
@@ -129,18 +132,13 @@
 
     <!-- Main Catalog Content -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">
-      <!-- Loading State -->
       <div id="loading" class="text-center py-20">
         <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-amber-600 border-t-transparent"></div>
         <p class="mt-4 text-slate-500 font-medium">Mengambil data dari showroom...</p>
       </div>
 
-      <!-- Motor Grid -->
-      <div id="motorGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 hidden">
-        <!-- Card Template akan dirender lewat Javascript -->
-      </div>
+      <div id="motorGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 hidden"></div>
 
-      <!-- Empty State -->
       <div id="emptyState" class="text-center py-20 hidden">
         <i data-lucide="bike" class="w-16 h-16 text-slate-300 mx-auto mb-4"></i>
         <h3 class="text-xl font-bold text-slate-700">Unit Tidak Ditemukan</h3>
@@ -167,9 +165,7 @@
       </div>
 
       <!-- Detail Container Card -->
-      <div class="bg-white border border-slate-200 rounded-3xl p-6 sm:p-10 shadow-xl" id="detailContent">
-        <!-- Dynamic Detail Content -->
-      </div>
+      <div class="bg-white border border-slate-200 rounded-3xl p-6 sm:p-10 shadow-xl" id="detailContent"></div>
 
     </div>
   </div>
@@ -179,12 +175,26 @@
     <p>© 2026 BujangMOTOR. All rights reserved.</p>
   </footer>
 
+  <!-- PhotoSwipe Module Import -->
+  <script type="module">
+    import PhotoSwipeLightbox from 'https://cdn.jsdelivr.net/npm/photoswipe@5.4.3/dist/photoswipe-lightbox.esm.js';
+
+    window.initPhotoSwipe = function() {
+      const lightbox = new PhotoSwipeLightbox({
+        gallery: '#photoGallery',
+        children: 'a',
+        pswpModule: () => import('https://cdn.jsdelivr.net/npm/photoswipe@5.4.3/dist/photoswipe.esm.js'),
+        bgOpacity: 0.95,
+        paddingFn: () => ({ top: 30, bottom: 30, left: 20, right: 20 })
+      });
+
+      lightbox.init();
+    };
+  </script>
+
   <!-- Script Application -->
   <script>
-    // NOMOR WHATSAPP SHOWROOM
     const SHOWROOM_WA_NUMBER = "6281977555760";
-
-    // WEB APP URL GOOGLE APPS SCRIPT
     const GAS_API_URL = "https://script.google.com/macros/s/AKfycbyt4P4GCxEg3ogzHdnYKlN2RhxCQ2de0H9fsApziqGVqLCkgwZ28IpAUrcv8T4GmT5l/exec";
 
     let motorsData = [];
@@ -345,6 +355,7 @@
       document.getElementById('btnShareDetail').setAttribute('onclick', `copyToClipboard('${shareableUrl}')`);
 
       const photos = [
+        { label: 'Foto Utama (Thumbnail)', url: formatDriveUrl(item['THUMBNAIL']) },
         { label: 'Tampak Depan', url: formatDriveUrl(item['FOTO_DEPAN']) },
         { label: 'Tampak Belakang', url: formatDriveUrl(item['FOTO_BELAKANG']) },
         { label: 'Sisi Kanan', url: formatDriveUrl(item['FOTO_KANAN']) },
@@ -379,19 +390,40 @@ Apakah unit ini masih tersedia?`;
           <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">${item.UNIT}</h1>
         </div>
 
+        <!-- Galeri PhotoSwipe Support Pinch-to-Zoom 2 Jari -->
         <div class="mb-10">
-          <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
-            <i data-lucide="camera" class="w-5 h-5 text-amber-600"></i> Galeri Foto Unit
+          <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center justify-between">
+            <span class="flex items-center gap-2">
+              <i data-lucide="camera" class="w-5 h-5 text-amber-600"></i> Galeri Foto Unit (${photos.length})
+            </span>
+            <span class="text-xs text-slate-400 font-normal">Klik untuk zoom 2 jari / fullscreen</span>
           </h3>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            ${photos.map(p => `
-              <div class="group relative aspect-[4/3] rounded-2xl overflow-hidden bg-slate-100 border border-slate-200 shadow-sm">
-                <img src="${p.url}" alt="${p.label}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
-                <span class="absolute bottom-3 left-3 bg-slate-900/80 backdrop-blur-md text-xs font-medium text-white px-3 py-1 rounded-lg">
-                  ${p.label}
+
+          <div id="photoGallery">
+            <!-- Thumbnail Paling Atas dan Paling Besar -->
+            <a href="${photos[0].url}" data-pswp-width="1200" data-pswp-height="800" target="_blank" class="block group relative aspect-video rounded-2xl overflow-hidden bg-slate-100 border border-slate-200 shadow-md mb-4 cursor-zoom-in">
+              <img src="${photos[0].url}" alt="${photos[0].label}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+              <span class="absolute top-4 left-4 bg-amber-600/90 backdrop-blur-md text-xs font-bold text-white px-3 py-1 rounded-lg shadow-sm">
+                ${photos[0].label}
+              </span>
+              <div class="absolute inset-0 bg-slate-900/10 group-hover:bg-slate-900/30 transition flex items-center justify-center">
+                <span class="bg-black/60 text-white text-xs font-semibold px-4 py-2 rounded-xl backdrop-blur-md opacity-0 group-hover:opacity-100 transition duration-300 flex items-center gap-2">
+                  <i data-lucide="maximize-2" class="w-4 h-4"></i> Perbesar Foto
                 </span>
               </div>
-            `).join('')}
+            </a>
+
+            <!-- Grid 4 Foto Lainnya -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              ${photos.slice(1).map(p => `
+                <a href="${p.url}" data-pswp-width="1200" data-pswp-height="800" target="_blank" class="block group relative aspect-[4/3] rounded-xl overflow-hidden bg-slate-100 border border-slate-200 shadow-sm cursor-zoom-in">
+                  <img src="${p.url}" alt="${p.label}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                  <span class="absolute bottom-2 left-2 bg-slate-900/80 backdrop-blur-md text-[11px] font-medium text-white px-2 py-0.5 rounded">
+                    ${p.label}
+                  </span>
+                </a>
+              `).join('')}
+            </div>
           </div>
         </div>
 
@@ -447,6 +479,11 @@ Apakah unit ini masih tersedia?`;
       document.title = `${item.UNIT} - BujangMOTOR`;
       window.scrollTo(0, 0);
       lucide.createIcons();
+
+      // Inisialisasi PhotoSwipe Lightbox
+      if (window.initPhotoSwipe) {
+        window.initPhotoSwipe();
+      }
     }
 
     function handleUrlHash() {
