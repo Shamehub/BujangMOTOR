@@ -59,21 +59,27 @@
     <span id="toastMessage" class="text-sm font-medium">Link berhasil disalin!</span>
   </div>
 
-  <!-- Header / Navigation -->
+   <!-- Header / Navigation (Brand Logo Biasa / Tanpa Onclick) -->
   <header class="sticky top-0 z-40 border-b border-slate-200 glass-header shadow-sm">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">      
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center text-white font-black text-xl shadow-md shadow-amber-500/20">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-2">
+      
+      <!-- Brand Logo & Title (Biasa / Static Div) -->
+      <div class="flex items-center gap-2 sm:gap-3 min-w-0">
+        <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-gradient-to-br from-amber-500 to-amber-700 flex-shrink-0 flex items-center justify-center text-white font-black text-base sm:text-xl shadow-md shadow-amber-500/20">
           BM
         </div>
-        <div>
-          <span class="text-xl font-black tracking-wider text-slate-900">BUJANG<span class="text-amber-600">MOTOR</span></span>
-          <span class="block text-[10px] titlecase tracking-widest text-slate-500 -mt-1 font-semibold">Motor Bekas, Masih Berkualitas</span>
+        <div class="truncate">
+          <span class="text-base sm:text-xl font-black tracking-wider text-slate-900 block leading-tight">BUJANG<span class="text-amber-600">MOTOR</span></span>
+          <span class="block text-[9px] sm:text-[10px] uppercase tracking-widest text-slate-500 font-semibold truncate">Premium Showroom</span>
         </div>
-      
-      <a href="https://wa.me/6281977555760?text=Halo%20BujangMOTOR,%20saya%20ingin%20bertanya%20mengenai%20katalog%20unit%20motor" target="_blank" class="flex items-center gap-2 bg-slate-900 hover:bg-amber-600 text-white font-bold px-4 py-2 rounded-xl transition duration-300 shadow-md text-sm">
-        <i data-lucide="phone" class="w-2 h-2"></i>
+      </div>
+
+      <!-- Tombol Hubungi Kami Ringkas (Mobile-Friendly) -->
+      <a href="https://wa.me/6281977555760?text=Halo%20BujangMOTOR,%20saya%20ingin%20bertanya%20mengenai%20katalog%20unit%20motor" target="_blank" class="flex-shrink-0 flex items-center gap-1.5 bg-slate-900 hover:bg-amber-600 text-white font-bold px-3 py-1.5 sm:px-5 sm:py-2.5 rounded-lg sm:rounded-xl transition duration-300 shadow-md text-xs sm:text-sm whitespace-nowrap">
+        <i data-lucide="phone" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
         <span>Hubungi Kami</span>
       </a>
+
     </div>
   </header>
 
