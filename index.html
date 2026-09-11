@@ -3,15 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- ================= Open Graph / WhatsApp Preview Meta Tags ================= -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://shamehub.github.io/BujangMOTOR/">
   <meta property="og:title" content="BujangMOTOR — Showroom Motor Bekas Premium">
   <meta property="og:description" content="Koleksi motor second berkualitas premium, dokumen lengkap STNK & BPKB, bergaransi dan siap pakai.">
-  <!-- Ganti URL gambar di bawah dengan foto banner / logo showroom Anda (Rekomendasi rasio 16:9 / 1200x630 px) -->
-  <meta property="og:image" content="https://lh3.googleusercontent.com/d/1IMxueRbYC_EKxcclh1alsVHHGHycu-Vx">
+  <meta property="og:image" content="https://shamehub.github.io/BujangMOTOR/preview.jpg">
+  <meta property="og:image:secure_url" content="https://shamehub.github.io/BujangMOTOR/preview.jpg">
+  <meta property="og:image:type" content="image/jpeg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
+
   <title>BujangMOTOR — Koleksi Motor Second Siap Pakai</title>
+
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Font Family Google -->
@@ -73,21 +78,34 @@
 
   <!-- ==================== VIEW 1: KATALOG UTAMA (HOME VIEW) ==================== -->
   <div id="homeView">
-    <!-- Hero Section -->
-    <section class="relative py-12 lg:py-16 bg-gradient-to-b from-amber-500/10 via-slate-100/50 to-slate-50 border-b border-slate-200">
+    <!-- Hero Section dengan Background Gambar Transparan & Blur -->
+    <section class="relative py-12 lg:py-16 overflow-hidden border-b border-slate-200">
+      
+      <!-- Layer Gambar Latar Belakang (Transparansi 75% / Opacity 25% + Blur) -->
+      <div class="absolute inset-0 z-0">
+        <img 
+          src="https://shamehub.github.io/BujangMOTOR/preview.jpg" 
+          alt="Showroom Background" 
+          class="w-full h-full object-cover opacity-25 blur-[3px] scale-105"
+        >
+        <!-- Overlay Gradient -->
+        <div class="absolute inset-0 bg-gradient-to-b from-amber-500/10 via-slate-50/70 to-slate-50"></div>
+      </div>
+
+      <!-- Konten Teks & Filter -->
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
-        <span class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full border border-amber-600/20 bg-amber-50 text-amber-700 text-xs font-bold uppercase tracking-widest mb-6 shadow-sm">
+        <span class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full border border-amber-600/20 bg-white/80 backdrop-blur-md text-amber-700 text-xs font-bold uppercase tracking-widest mb-6 shadow-sm">
           <i data-lucide="shield-check" class="w-4 h-4 text-amber-600"></i> Garansi & Dokumen Lengkap
         </span>
-        <h1 class="text-4xl sm:text-6xl font-extrabold text-slate-900 tracking-tight leading-tight max-w-4xl mx-auto">
+        <h1 class="text-4xl sm:text-6xl font-extrabold text-slate-900 tracking-tight leading-tight max-w-4xl mx-auto drop-shadow-sm">
           Koleksi Motor Bekas <span class="bg-gradient-to-r from-amber-600 to-amber-800 bg-clip-text text-transparent">Berkualitas Premium</span>
         </h1>
-        <p class="mt-4 text-slate-600 text-lg max-w-2xl mx-auto font-medium">
+        <p class="mt-4 text-slate-700 text-lg max-w-2xl mx-auto font-medium">
           Unit pilihan bergaransi dengan kepastian dokumen (STNK & BPKB Lengkap), kondisi teruji, dan siap pakai.
         </p>
 
         <!-- Search & Filter Controls -->
-        <div class="mt-10 max-w-4xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-3 p-3 bg-white border border-slate-200 rounded-2xl shadow-xl">
+        <div class="mt-10 max-w-4xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-3 p-3 bg-white/90 border border-slate-200/80 rounded-2xl shadow-xl backdrop-blur-md">
           <!-- Search -->
           <div class="relative">
             <i data-lucide="search" class="absolute left-3.5 top-3.5 w-5 h-5 text-slate-400"></i>
@@ -163,10 +181,10 @@
 
   <!-- Script Application -->
   <script>
-    // GANTI NOMOR WHATSAPP SHOWROOM ANDA DI SINI (Format: 628xxx)
-    const SHOWROOM_WA_NUMBER = "628197755570";
+    // NOMOR WHATSAPP SHOWROOM
+    const SHOWROOM_WA_NUMBER = "6281977555760";
 
-    // GANTI URL INI DENGAN WEB APP URL DARI GOOGLE APPS SCRIPT ANDA
+    // WEB APP URL GOOGLE APPS SCRIPT
     const GAS_API_URL = "https://script.google.com/macros/s/AKfycbyt4P4GCxEg3ogzHdnYKlN2RhxCQ2de0H9fsApziqGVqLCkgwZ28IpAUrcv8T4GmT5l/exec";
 
     let motorsData = [];
@@ -197,7 +215,6 @@
         document.getElementById('loading').classList.add('hidden');
         document.getElementById('motorGrid').classList.remove('hidden');
 
-        // Cek URL Hash saat halaman dimuat
         handleUrlHash();
       } catch (err) {
         console.error("Gagal mengambil data:", err);
@@ -289,7 +306,6 @@
       lucide.createIcons();
     }
 
-    // Filter Functionality
     function filterData() {
       const search = document.getElementById('searchInput').value.toLowerCase();
       const category = document.getElementById('categoryFilter').value;
@@ -311,7 +327,6 @@
     document.getElementById('categoryFilter').addEventListener('change', filterData);
     document.getElementById('capacityFilter').addEventListener('change', filterData);
 
-    // Switch View Functions
     function showHomeView() {
       document.getElementById('homeView').classList.remove('hidden');
       document.getElementById('detailView').classList.add('hidden');
@@ -327,7 +342,6 @@
       document.getElementById('homeView').classList.add('hidden');
       document.getElementById('detailView').classList.remove('hidden');
 
-      // Set Share Button Action
       document.getElementById('btnShareDetail').setAttribute('onclick', `copyToClipboard('${shareableUrl}')`);
 
       const photos = [
@@ -337,7 +351,6 @@
         { label: 'Sisi Kiri', url: formatDriveUrl(item['FOTO_KIRI']) }
       ];
 
-      // MERANGKAI PESAN TERSTRUKTUR UNTUK WHATSAPP
       const waText = `Halo BujangMOTOR, saya ingin bertanya/booking unit berikut:
 
 • Merk: ${item.KATEGORI || '-'}
@@ -354,7 +367,6 @@ Apakah unit ini masih tersedia?`;
 
       const detailContent = document.getElementById('detailContent');
       detailContent.innerHTML = `
-        <!-- Title & Badge Header -->
         <div class="mb-8 border-b border-slate-100 pb-6">
           <div class="flex flex-wrap items-center gap-3 mb-3">
             <span class="text-xs font-bold uppercase tracking-widest text-amber-700 bg-amber-100 border border-amber-200 px-3.5 py-1 rounded-full">
@@ -367,7 +379,6 @@ Apakah unit ini masih tersedia?`;
           <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">${item.UNIT}</h1>
         </div>
 
-        <!-- Photo Gallery Full Grid -->
         <div class="mb-10">
           <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
             <i data-lucide="camera" class="w-5 h-5 text-amber-600"></i> Galeri Foto Unit
@@ -384,7 +395,6 @@ Apakah unit ini masih tersedia?`;
           </div>
         </div>
 
-        <!-- Spesifikasi Unit Grid -->
         <div class="mb-10">
           <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
             <i data-lucide="sliders" class="w-5 h-5 text-amber-600"></i> Spesifikasi & Kelengkapan
@@ -417,7 +427,6 @@ Apakah unit ini masih tersedia?`;
           </div>
         </div>
 
-        <!-- Deskripsi & Kondisi -->
         <div class="mb-10">
           <h3 class="text-lg font-bold text-slate-800 mb-3 flex items-center gap-2">
             <i data-lucide="file-text" class="w-5 h-5 text-amber-600"></i> Catatan & Kondisi Fisik
@@ -427,7 +436,6 @@ Apakah unit ini masih tersedia?`;
           </div>
         </div>
 
-        <!-- Primary Action Call-to-Action (WhatsApp Link Dynamic) -->
         <div class="pt-6 border-t border-slate-200">
           <a href="${waLink}" target="_blank" class="w-full bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-white font-extrabold py-4 rounded-2xl transition duration-300 flex items-center justify-center gap-3 shadow-lg shadow-amber-600/20 text-base sm:text-lg">
             <i data-lucide="message-square" class="w-6 h-6"></i>
@@ -441,7 +449,6 @@ Apakah unit ini masih tersedia?`;
       lucide.createIcons();
     }
 
-    // Hash Router Handler
     function handleUrlHash() {
       const hash = window.location.hash.replace('#', '');
       if (!hash) {
@@ -459,7 +466,6 @@ Apakah unit ini masih tersedia?`;
 
     window.addEventListener('hashchange', handleUrlHash);
 
-    // Share & Copy Helper Functions
     function shareLink(hash) {
       const fullUrl = `${window.location.origin}${window.location.pathname}${hash}`;
       copyToClipboard(fullUrl);
